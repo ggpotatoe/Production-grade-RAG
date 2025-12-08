@@ -125,9 +125,13 @@ obuda-phonebook-rag/
 │   └── .env.example
 │
 ├── frontend/
+│   ├── app.js 
 │   ├── index.html
 │   ├── style.css
-│   └── app.js
+│   └── assets/
+│       ├── OE_jubileumok_eve_feher.png
+│       ├── UJ_Óbudai_Egyetem_LOGO_FEHER-1.png
+│       └── THE_WUR_2025_NEW_Ranking_Template_Top_800_WO.png
 │
 ├── docker-compose.yml
 └── README.md
