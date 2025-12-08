@@ -54,8 +54,11 @@ Production-Grade RAG (Retrieval-Augmented Generation) alkalmazás az Óbudai Egy
    # Optional
    # OPENIS_BASE_URL=your_deployment_endpoint
    ```
+3. **Adatforrás létrehozása**
 
-3. **Indítsd el a Qdrant adatbázist**
+   A projekt gyökerében hozz létre egy `data` mappát, amibe az `ad users.xlsx` fájlt elhelyezed.
+
+5. **Indítsd el a Qdrant adatbázist**
 
    ```bash
    docker-compose up -d
@@ -63,14 +66,14 @@ Production-Grade RAG (Retrieval-Augmented Generation) alkalmazás az Óbudai Egy
 
    Ez elindítja a Qdrant konténert a `localhost:6333` porton.
 
-4. **Telepítsd a Python függőségeket**
+6. **Telepítsd a Python függőségeket**
 
    ```bash
    cd backend
    pip install -r requirements.txt
    ```
 
-5. **Indítsd el a backend szervert**
+7. **Indítsd el a backend szervert**
 
    ```bash
    cd backend\app
@@ -79,7 +82,7 @@ Production-Grade RAG (Retrieval-Augmented Generation) alkalmazás az Óbudai Egy
 
    A backend elérhető lesz a `http://localhost:8000` címen.
 
-6. **Nyisd meg a frontend-et**
+8. **Nyisd meg a frontend-et**
 
    Ezután nyisd meg a böngészőben: `http://localhost:8080`
 
