@@ -1,25 +1,100 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu-HU">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Óbudai Egyetem - Telefonkönyv Kereső</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Telefonkönyv - ÓE</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="header-content">
-                <h1>Óbudai Egyetem</h1>
-                <p class="subtitle">Telefonkönyv Kereső</p>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div>
+                <a href="#" id="langHU">HU</a> | <a href="#" id="langEN">EN</a>
             </div>
-            <button id="languageToggle" class="language-toggle" aria-label="Nyelv váltása">
-                <span id="currentLang">HU</span>
-            </button>
-        </header>
+            <div>
+                <a href="#" data-translate="top-green">ZÖLD ÓE</a>
+                <a href="#" data-translate="top-tender">PÁLYÁZAT</a>
+                <a href="#" data-translate="top-job">ÁLLÁS</a>
+                <a href="#" data-translate="top-neptun">NEPTUN</a>
+                <a href="#" data-translate="top-elearning">E-LEARNING</a>
+                <a href="#" data-translate="top-intranet">INTRANET</a>
+                <a href="#" data-translate="top-phonebook">TELEFONKÖNYV</a>
+            </div>
+        </div>
+    </div>
 
-        <main class="main-content">
-            <div class="chat-container">
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="/static/assets/OE_jubileumok_eve_feher.png" alt="ÓE">
+                <img src="/static/assets/THE_WUR_2025_NEW_Ranking_Template_Top_800_WO.png" alt="THE Ranking">
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#"><span data-translate="nav-university">EGYETEMÜNK</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li><a href="#"><span data-translate="nav-programs">KÉPZÉSEINK</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li><a href="#"><span data-translate="nav-students">HALLGATÓKNAK</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li><a href="#" data-translate="nav-applicants">FELVÉTELIZŐKNEK</a></li>
+                    <li><a href="#"><span data-translate="nav-science">TUDOMÁNY</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li><a href="#"><span data-translate="nav-research">KUTATÁS</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li><a href="#"><span data-translate="nav-innovation">INNOVÁCIÓ</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li><a href="#"><span data-translate="nav-international">NEMZETKÖZI PROFIL</span> <span class="dropdown-arrow">▼</span></a></li>
+                    <li>
+                        <button type="button" class="magnify-button" >
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title" data-translate="page-title">Telefonkönyv</h1>
+
+                <div class="toggle-container">
+                    <span class="toggle-label" id="toggleLabel">Klasszikus keresés</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modeToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Klasszikus keresés form -->
+            <form class="search-form" id="classicSearch">
+                <div class="form-group">
+                    <label for="name" data-translate="form-name">Név:</label>
+                    <input type="text" id="name" name="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="division" data-translate="form-position">Beosztás:</label>
+                    <input type="text" id="division" name="division">
+                </div>
+
+                <div class="form-group">
+                    <label for="unit" data-translate="form-unit">Szervezeti egység:</label>
+                    <input type="text" id="unit" name="unit">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" data-translate="form-phone">Telefonszám:</label>
+                    <input type="text" id="phone" name="phone">
+                </div>
+
+                <button type="submit" class="search-button" data-translate="form-submit">LEKÉRDEZÉS</button>
+            </form>
+
+            <!-- AI Asszisztens chat -->
+            <div class="chat-container" id="aiChat">
                 <div id="chatMessages" class="chat-messages">
                     <div class="message bot-message">
                         <div class="message-content">
@@ -27,7 +102,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="loadingIndicator" class="loading-indicator" style="display: none;">
                     <div class="loading-dots">
                         <span></span>
@@ -52,10 +127,137 @@
                     </button>
                 </div>
             </div>
-        </main>
+        </div>
+
+        <aside class="sidebar">
+            <div class="calendar-widget">
+                <div class="calendar-title" data-translate="calendar-title">ESEMÉNYNAPTÁR</div>
+
+                <div class="calendar-header">
+                    <button class="calendar-nav">‹</button>
+                    <div class="calendar-month" data-translate="calendar-month">december 2025</div>
+                    <button class="calendar-nav">›</button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-day-header" data-translate="day-mon">H</div>
+                    <div class="calendar-day-header" data-translate="day-tue">K</div>
+                    <div class="calendar-day-header" data-translate="day-wed">SZE</div>
+                    <div class="calendar-day-header" data-translate="day-thu">CS</div>
+                    <div class="calendar-day-header" data-translate="day-fri">P</div>
+                    <div class="calendar-day-header" data-translate="day-sat">SZO</div>
+                    <div class="calendar-day-header" data-translate="day-sun">V</div>
+
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+
+                    <div class="calendar-day">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+
+                    <div class="calendar-day">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                    <div class="calendar-day">31</div>
+                    <div class="calendar-day other-month">1</div>
+                    <div class="calendar-day other-month">2</div>
+                    <div class="calendar-day other-month">3</div>
+                    <div class="calendar-day other-month">4</div>
+                </div>
+
+                <div class="events-list">
+                    <div class="event-item">
+                        <div class="event-time">12.10. 15:00 - 18:00</div>
+                        <div class="event-title">InnObuda</div>
+                    </div>
+
+                    <div class="event-item">
+                        <div class="event-time">12.11. 16:00 - 18:00</div>
+                        <div class="event-title">Karácsonyi összejövetel AMK</div>
+                    </div>
+
+                    <div class="event-item">
+                        <div class="event-time">12.15. 09:30 - 11:30</div>
+                        <div class="event-title">1. Initium Üzleti Brunch</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3 data-translate="footer-headquarters">SZÉKHELY</h3>
+                    <p>1034 Budapest,<br>Bécsi út 96/B<br><span data-translate="footer-phone">Telefon:</span> +36 (1) 666-5500</p>
+                    <div class="footer-social">
+                        <a href="#">f</a>
+                        <a href="#">📷</a>
+                        <a href="#">▶</a>
+                        <a href="#">in</a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3 data-translate="footer-rectorate">REKTORI HIVATAL</h3>
+                    <p>1034 Budapest,<br>Bécsi út 96/B I-II. emelet</p>
+                </div>
+
+                <div class="footer-column">
+                    <h3 data-translate="footer-press">SAJTÓSZOBA</h3>
+                    <a href="#" data-translate="footer-press-contact">Sajtókapcsolat</a>
+                    <a href="#" data-translate="footer-newsletter">Hírmondó</a>
+                    <a href="#" data-translate="footer-videos">Videótár</a>
+                </div>
+
+                <div class="footer-column">
+                    <h3 data-translate="footer-info">INFORMÁCIÓK</h3>
+                    <a href="#" data-translate="footer-contact">Kapcsolat</a>
+                    <a href="#" data-translate="footer-public-data">Közérdekű adatok</a>
+                    <a href="#" data-translate="footer-privacy">Adatvédelem</a>
+                    <a href="#" data-translate="footer-cookie">Cookie nyilatkozat</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>
+                    <img src="/static/assets/UJ_Óbudai_Egyetem_LOGO_FEHER-1.png" alt="ÓE" style="height: 40px;">
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#" data-translate="footer-imprint">Impresszum</a>
+                    <a href="#" data-translate="footer-job">Állás</a>
+                    <a href="#" data-translate="footer-archive">Archívum</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="/static/app.js"></script>
 </body>
 </html>
-
