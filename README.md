@@ -47,14 +47,12 @@ Production-Grade RAG (Retrieval-Augmented Generation) alkalmazás az Óbudai Egy
 
 2. **Állítsd be a környezeti változókat**
 
-   ```bash
-   cd backend
-   cp .env.example .env
-   ```
-
-   Szerkeszd a `.env` fájlt és add meg az OpenAI API kulcsodat:
+   Hozz létre a `backend` mappában egy `.env` fájlt.
+   Szerkeszd a `.env` fájlt és add meg az OpenAI API kulcsodat (illetve opcionálisan a provider endpointját):
    ```
    OPENAI_API_KEY=your_api_key_here
+   # Optional
+   # OPENIS_BASE_URL=your_deployment_endpoint
    ```
 
 3. **Indítsd el a Qdrant adatbázist**
@@ -75,20 +73,13 @@ Production-Grade RAG (Retrieval-Augmented Generation) alkalmazás az Óbudai Egy
 5. **Indítsd el a backend szervert**
 
    ```bash
-   cd backend
-   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   cd backend\app
+   python main.py
    ```
 
    A backend elérhető lesz a `http://localhost:8000` címen.
 
 6. **Nyisd meg a frontend-et**
-
-   Egyszerűen nyisd meg a `frontend/index.html` fájlt egy böngészőben, vagy használj egy egyszerű HTTP szervert:
-
-   ```bash
-   cd frontend
-   python -m http.server 8080
-   ```
 
    Ezután nyisd meg a böngészőben: `http://localhost:8080`
 
@@ -194,11 +185,8 @@ curl -X POST http://localhost:8000/reindex
 ### Környezeti változók
 
 A `backend/.env` fájlban beállítható:
-- `OPENAI_API_KEY` - OpenAI API kulcs (kötelező)
-- `QDRANT_HOST` - Qdrant host (alapértelmezett: localhost)
-- `QDRANT_PORT` - Qdrant port (alapértelmezett: 6333)
-- `EMBEDDING_MODEL` - Embedding modell (alapértelmezett: intfloat/multilingual-e5-large)
-- `LLM_MODEL` - LLM modell (alapértelmezett: gpt-4o-mini)
+- `OPENAI_API_KEY` - OpenAI API kulcs (kötelező), vagy Provider api key
+- `OPENAI_BASE_URL` - Provider endpoint, amennyiben nem közvetlenül OpenAI-on keresztül hívod a modellt
 
 ## 📝 Megjegyzések
 
