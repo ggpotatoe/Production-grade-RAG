@@ -419,17 +419,36 @@
         }
 
         function formatAnswer(answer) {
-            // Convert phone numbers to clickable links
-            const phoneRegex = /(\+?\d{1,3}[\s\-\(\)]?\d{1,4}[\s\-\(\)]?\d{1,4}[\s\-\(\)]?\d{1,4}[\s\-\(\)]?\d{1,4})/g;
+            // Convert markdown bold (**text** or __text__) to <strong>
+            answer = answer.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            answer = answer.replace(/__(.+?)__/g, '<strong>$1</strong>');
+            
+            // Convert markdown italic (*text* or _text_) to <em>
+            answer = answer.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            answer = answer.replace(/_(.+?)_/g, '<em>$1</em>');
+            
+            // Convert markdown headers (## Header)
+            answer = answer.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+            answer = answer.replace(/^## (.+)$/gm, '<h3>$1</h3>');
+            answer = answer.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+            
+            // Convert markdown lists
+            answer = answer.replace(/^[\*\-] (.+)$/gm, '<li>$1</li>');
+            answer = answer.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Convert phone numbers to clickable links (improved regex to capture full Hungarian format)
+            // Matches: +36 (XX) XXX-XXXX or +36 XX XXX XXXX or variations
+            const phoneRegex = /(\+\d{1,3}[\s\-]?\(?\d{1,3}\)?[\s\-]?\d{1,4}[\s\-]?\d{1,4}[\s\-]?\d{0,4})/g;
             answer = answer.replace(phoneRegex, (match) => {
+                // Clean phone for tel: link but preserve original format for display
                 const cleanPhone = match.replace(/[\s\-\(\)]/g, '');
-                return `<a href="tel:${cleanPhone}">${match}</a>`;
+                return `<a href="tel:${cleanPhone}" class="phone-link">${match}</a>`;
             });
             
             // Convert email addresses to clickable links
             const emailRegex = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g;
             answer = answer.replace(emailRegex, (match) => {
-                return `<a href="mailto:${match}">${match}</a>`;
+                return `<a href="mailto:${match}" class="email-link">${match}</a>`;
             });
             
             // Convert line breaks to <br>
