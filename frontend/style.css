@@ -189,7 +189,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: var(--primary-color);
+            background-color: gray;
             transition: .4s;
             border-radius: 30px;
         }
@@ -207,7 +207,7 @@
         }
 
         input:checked + .toggle-slider {
-            background-color: var(--secondary-color);
+            background-color: var(--primary-color);
         }
 
         input:checked + .toggle-slider:before {
