@@ -1,6 +1,7 @@
 """FastAPI main application entry point."""
 import sys
 from pathlib import Path
+from typing import List  # Needed for type hints in caching helpers
 
 # Add parent directory to path so 'app' module can be found when running directly
 # This allows running: python main.py from the backend/app/ directory
@@ -18,10 +19,13 @@ import asyncio
 from contextlib import asynccontextmanager
 
 from app.models import QueryRequest, QueryResponse, HealthResponse, SearchResult
-from app.services.ingestion import process_data_file, generate_embeddings
+from app.services.ingestion import process_data_file, generate_embeddings, get_embedding_model
 from app.services.vector_store import VectorStore
 from app.services.llm_engine import LLMEngine
+from app.services.query_processor import preprocess_query
 from app.config import settings
+import hashlib
+from functools import lru_cache
 
 # Initialize services
 vector_store = VectorStore()
@@ -149,6 +153,38 @@ def initialize_llm():
             print(f"Warning: LLM engine not initialized: {e}")
     return llm_engine
 
+# Query embedding cache (simple dict cache for frequently asked queries)
+_query_embedding_cache = {}
+
+@lru_cache(maxsize=1000)
+def _get_cached_query_embedding(query_hash: str, query_text: str) -> List[float]:
+    """
+    Get cached query embedding or generate new one.
+    Uses simple dict cache for better control and performance.
+    """
+    if query_hash in _query_embedding_cache:
+        return _query_embedding_cache[query_hash]
+    
+    model = get_embedding_model()
+    embeddings = list(model.embed([query_text]))
+    embedding = embeddings[0] if embeddings else None
+    
+    # Convert numpy array to list if needed
+    if embedding is not None and hasattr(embedding, 'tolist'):
+        embedding = embedding.tolist()
+    
+    # Check if we have a valid embedding (list with elements)
+    if embedding is not None and len(embedding) > 0:
+        # Cache up to 1000 queries (FIFO eviction)
+        if len(_query_embedding_cache) >= 1000:
+            # Remove oldest entry
+            oldest_key = next(iter(_query_embedding_cache))
+            del _query_embedding_cache[oldest_key]
+        
+        _query_embedding_cache[query_hash] = embedding
+    
+    return embedding
+
 @app.get("/")
 async def root():
     """Root endpoint - serves index.html from mounted static files."""
@@ -254,18 +290,32 @@ async def query(request: QueryRequest):
                 language=request.language
             )
         
-        # Generate query embedding with "query:" prefix for E5 model
-        query_text = f"query: {request.query}"
-        print(f"Generating embedding for query: {request.query}")
-        query_embeddings = generate_embeddings([query_text])
-        query_embedding = query_embeddings[0]
+        # Preprocess query for better results
+        processed_query = preprocess_query(request.query)
+        
+        # Generate query embedding with caching
+        query_text = f"query: {processed_query}"
+        query_hash = hashlib.md5(query_text.encode()).hexdigest()
+        
+        print(f"Generating embedding for query: {request.query} (processed: {processed_query})")
+        query_embedding = _get_cached_query_embedding(query_hash, query_text)
+        
+        # Convert to list if it's a numpy array
+        if hasattr(query_embedding, 'tolist'):
+            query_embedding = query_embedding.tolist()
+        
+        # Check if embedding is valid (empty list or None)
+        if query_embedding is None or (isinstance(query_embedding, list) and len(query_embedding) == 0):
+            raise HTTPException(status_code=500, detail="Failed to generate query embedding")
+        
         print(f"Query embedding generated, vector size: {len(query_embedding)}")
         
-        # Search in vector store
+        # Search in vector store with adaptive threshold
         print(f"Searching in collection '{vector_store.collection_name}' with top_k={request.top_k}")
         search_results = vector_store.search(
             query_embedding=query_embedding,
-            top_k=request.top_k
+            top_k=request.top_k,
+            query_text=processed_query  # Pass for adaptive threshold
         )
         print(f"Search returned {len(search_results)} results")
         

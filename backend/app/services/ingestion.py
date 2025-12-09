@@ -4,6 +4,18 @@ from typing import List, Dict, Any, Tuple
 from pathlib import Path
 from fastembed import TextEmbedding
 from app.config import settings
+import hashlib
+
+# Singleton embedding model cache
+_embedding_model = None
+
+def get_embedding_model():
+    """Get or create singleton embedding model instance."""
+    global _embedding_model
+    if _embedding_model is None:
+        print(f"Initializing embedding model: {settings.EMBEDDING_MODEL}")
+        _embedding_model = TextEmbedding(model_name=settings.EMBEDDING_MODEL)
+    return _embedding_model
 
 def process_data_file(file_path: str) -> Tuple[List[str], List[Dict[str, Any]]]:
     """
@@ -70,7 +82,7 @@ def process_data_file(file_path: str) -> Tuple[List[str], List[Dict[str, Any]]]:
 
 def generate_embeddings(documents: List[str]) -> List[List[float]]:
     """
-    Generate embeddings for documents using FastEmbed.
+    Generate embeddings for documents using FastEmbed (with cached model).
     
     Args:
         documents: List of document texts (already prefixed with "passage:")
@@ -78,7 +90,27 @@ def generate_embeddings(documents: List[str]) -> List[List[float]]:
     Returns:
         List of embedding vectors
     """
-    embedding_model = TextEmbedding(model_name=settings.EMBEDDING_MODEL)
-    embeddings = list(embedding_model.embed(documents))
+    model = get_embedding_model()
+    embeddings = list(model.embed(documents))
     return embeddings
+
+def get_document_id(metadata: Dict[str, Any]) -> str:
+    """
+    Generate deterministic document ID based on unique fields.
+    This allows deduplication and updates instead of always creating new documents.
+    
+    Args:
+        metadata: Document metadata dictionary
+        
+    Returns:
+        Deterministic hash-based ID
+    """
+    # Use UPN (email) as primary unique identifier, fallback to DisplayName
+    unique_key = metadata.get('UPN', '') or metadata.get('DisplayName', '')
+    if not unique_key:
+        # Fallback: use all available fields
+        unique_key = str(sorted(metadata.items()))
+    
+    # Generate deterministic hash
+    return hashlib.md5(unique_key.encode('utf-8')).hexdigest()
 
