@@ -93,7 +93,7 @@ Production-Grade RAG (Retrieval-Augmented Generation) alkalmazás az Óbudai Egy
 1. Nyisd meg a frontend oldalt a böngészőben
 2. Írj be egy kérdést a beviteli mezőbe, például:
    - "Ki a mérnöki intézet dékánja?"
-   - "Melyik a Györök György telefonszáma?"
+   - "Mi Györök György telefonszáma?"
    - "Kik dolgoznak az Alba Regia Karon?"
 3. A válasz automatikusan megjelenik a chatben
 4. A telefonszámok és email címek kattintható linkek
@@ -120,9 +120,10 @@ obuda-phonebook-rag/
 │   │       ├── __init__.py
 │   │       ├── ingestion.py   # Adatfeldolgozás
 │   │       ├── vector_store.py # Qdrant műveletek
+│   │       ├── query_processor.py # Query előfeldolgozás
 │   │       └── llm_engine.py  # OpenAI integráció
 │   ├── requirements.txt
-│   └── .env.example
+│   └── .env
 │
 ├── frontend/
 │   ├── app.js 
@@ -175,9 +176,9 @@ Természetes nyelvű lekérdezés feldolgozása.
 ## 🎨 Design
 
 Az alkalmazás az Óbudai Egyetem hivatalos arculatát követi:
-- **Primary Blue:** `#003E7E` - Fejlécek, gombok
-- **Secondary Orange:** `#F28C00` - Kiemelések, CTA elemek
-- **Background:** `#FFFFFF` és `#F5F5F5`
+- **Primary Blue:** `#1d294d` - Fejlécek, gombok
+- **Secondary Orange:** `#fcaf17` - Kiemelések, CTA elemek
+- **Background:** `#ffffff` és `#f5f5f5`
 
 ## 🔧 Fejlesztés
 
